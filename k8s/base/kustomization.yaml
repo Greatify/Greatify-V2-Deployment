@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment/base-deploy.yaml
+  - deployment/redis-deploy.yaml
+  - service/base-service.yaml
+  - service/redis-service.yaml
+  - ingress/base-ingress.yaml
+  - secretproviderclass/base-secretproviderclass.yaml

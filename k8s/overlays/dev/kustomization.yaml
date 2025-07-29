@@ -1,0 +1,89 @@
+# Kustomization configuration for development environment
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: dev-keystone-service
+labels:
+  - pairs:
+      environment: development
+    includeSelectors: false
+    includeTemplates: true
+
+resources:
+  - ../../base
+
+# Patches for different Kubernetes resources
+patches:
+  # Patch for Deployment configuration
+  - target:
+      kind: Deployment
+      name: keystone-service
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: keystone-service
+        labels:
+          app: keystone
+      spec:
+        template:
+          metadata:
+            labels:
+              app: keystone
+            annotations:
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:abed70c5581aa8e1f5ddc02be858f3fbe933ef4b-Lnx-17-add-tenant-details-retr 
+          spec:
+            containers:
+              - name: keystone
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:abed70c5581aa8e1f5ddc02be858f3fbe933ef4b-Lnx-17-add-tenant-details-retr
+                resources:
+                  requests:
+                    cpu: 400m
+                    memory: 600Mi
+                  limits:
+                    cpu: 500m
+                    memory: 700Mi
+
+  # Patch for Ingress configuration
+  - target:
+      kind: Ingress
+      name: keystone-ingress
+    patch: |-
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: keystone-ingress
+        annotations:
+          alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:399600302704:certificate/fc7615a3-19ad-4aa1-988a-ac4ce7e18986
+          alb.ingress.kubernetes.io/cors-allow-origin: >-
+            https://greatify.us,https://www.greatify.us,https://*.greatify.us,https://*.learnx.greatify.us,https://*.examx.greatify.us,https://*.placex.greatify.us,https://*.managex.greatify.us
+      spec:
+        rules:
+          - http:
+              paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: keystone-service
+                      port:
+                        number: 8000
+        tls:
+          - hosts:
+              -  greatify.us
+            secretName: tls-secret
+
+  # Patch for SecretProviderClass configuration
+  - target:
+      kind: SecretProviderClass
+      name: keystone-secrets
+    patch: |-
+      apiVersion: secrets-store.csi.x-k8s.io/v1
+      kind: SecretProviderClass
+      metadata:
+        name: keystone-secrets
+      spec:
+        parameters:
+          objects: |
+            - objectName: arn:aws:secretsmanager:ap-south-1:399600302704:secret:keystone-secrets-dev-Cs3Vge
+              objectAlias: ".env"
+              objectType: "secretsmanager"

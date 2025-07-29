@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keystone-service
+  labels:
+    app: keystone
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: keystone
+  template:
+    metadata:
+      labels:
+        app: keystone
+      annotations:
+        kubernetes.io/change-cause: "Updated to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/managex_school:72dc20463e72b3d3aefffd78b6b6c4be59f79947-feat-add-heycampus.io-to-allow-pushed-by-surya1005"
+    spec:
+      serviceAccountName: keystone-sa
+      volumes:
+      - name: keystone-secrets
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: keystone-secrets
+      containers:
+      - name: keystone
+        image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/managex_school:72dc20463e72b3d3aefffd78b6b6c4be59f79947-feat-add-heycampus.io-to-allow-pushed-by-surya1005
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "256m"
+          requests:
+            memory: "256Mi"
+            cpu: "128m"
+        volumeMounts:
+        - name: keystone-secrets
+          mountPath: /app/.env
+          subPath: .env

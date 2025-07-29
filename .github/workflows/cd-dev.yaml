@@ -1,0 +1,98 @@
+name: 🚀 Keystone - Deploy to Development
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: '📦 Keystone Docker image to deploy'
+        required: true
+      sha:
+        description: '🔢 Git SHA of the commit'
+        required: true
+      commit_message:
+        description: '📝 Sanitized commit message'
+        required: true
+
+jobs:
+  Deploy-to-Development:
+    name: 🛠️ Deploy to Dev Environment
+    runs-on: ubuntu-latest
+    environment: 
+      name: dev
+      url: https://greatify.us
+    timeout-minutes: 20
+
+    steps:
+      - name: 📋 Display Deployment Information
+        run: |
+          echo "📦 Keystone_Image: ${{ github.event.inputs.image }}"
+          echo "🔢 COMMIT_SHA: ${{ github.event.inputs.sha }}"
+          echo "📝 COMMIT_MESSAGE: ${{ github.event.inputs.commit_message }}"
+          echo "🌐 Environment: development"
+
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: 🔧 Set image tag and metadata from inputs
+        run: |
+          echo "KEYSTONE_IMAGE=${{ github.event.inputs.image }}" >> $GITHUB_ENV
+          echo "COMMIT_SHA=${{ github.event.inputs.sha }}" >> $GITHUB_ENV
+          echo "COMMIT_MESSAGE=${{ github.event.inputs.commit_message }}" >> $GITHUB_ENV
+          echo "DEPLOY_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
+
+      - name: 🛠️ Update kustomization.yaml with new image and change-cause
+        run: |
+          sed -i "s|image: .*|image: ${{ env.KEYSTONE_IMAGE }}|" k8s/overlays/dev/kustomization.yaml
+          sed -i "s|kubernetes.io/change-cause: .*|kubernetes.io/change-cause: Update to ${{ env.KEYSTONE_IMAGE }} |" k8s/overlays/dev/kustomization.yaml
+
+      - name: 📤 Commit and Push Changes to kustomization.yaml
+        run: |
+          git pull origin main
+          git config --local user.email "suriyanarayanan.s@greatify.ai"
+          git config --local user.name "surya1005"
+          git add -f k8s/overlays/dev/kustomization.yaml
+          git commit -m "🔧 Update deployment image and change cause [Automated] For Dev Environment"
+          git push origin main
+
+      - name: 🔐 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: ⚙️ Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name ${{ secrets.DEV_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+      - name: 🚀 Apply K8s manifests and monitor rollout
+        run: |
+          kubectl apply -k k8s/overlays/dev --validate=true
+          kubectl rollout status deployment/keystone-service -n dev-keystone-service --timeout=300s
+
+      # - name: 🌐 Create CloudFront Invalidation
+      #   run: |
+      #     INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION }} --paths "/*" --query 'Invalidation.Id' --output text)
+      #     echo "Created invalidation: $INVALIDATION_ID"
+      #     aws cloudfront wait invalidation-completed --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION }} --id $INVALIDATION_ID
+
+      - name: 📣 Slack Notification on Deployment Status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: author,action,eventName,ref,workflow
+          author_name: 🚀 Keystone Development Deployment Status
+          if_mention: success,failure
+          job_name: Deploy to Development
+          channel: learnx-team
+          username: Keystone
+          text: |
+            ${{ format('{0} *Deployment Job* - *{1} (Keystone Dev Environment)*', job.status == 'success' && ':rocket:' || ':x:', job.status) }}
+            *📦 Deployment for commit* `${{ env.COMMIT_SHA }}` by *${{ env.DEPLOY_ACTOR }}* has **${{ job.status }}** in *Keystone Dev Environment*.
+            *📝 Message:* `${{ env.COMMIT_MESSAGE }}`
+            ${{ job.status == 'success' && '✅ Your changes have been successfully deployed. Please verify them at [greatify.us](https://greatify.us).' || '❌ Deployment failed. Please check the logs and fix the issues.' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: ${{ job.status == 'success' && 'good' || 'danger' }}
