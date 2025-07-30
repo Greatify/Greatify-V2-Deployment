@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:532d5fe8fbe89e569e97eb9a5fcde4405ccfd5c4-Add-Dockerfile-enhancements-in 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:532d5fe8fbe89e569e97eb9a5fcde4405ccfd5c4-Add-Dockerfile-enhancements-in
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s
                 resources:
                   requests:
                     cpu: 400m
