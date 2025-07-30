@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: keystone-service
+  name: keystone-celery-service
   labels:
-    app: keystone
+    app: keystone-celery
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -13,13 +13,13 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app: keystone
+      app: keystone-celery
   template:
     metadata:
       labels:
-        app: keystone
+        app: keystone-celery
       annotations:
-        kubernetes.io/change-cause: "Updated to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s"
+        kubernetes.io/change-cause: "Updated to "
     spec:
       serviceAccountName: keystone-sa
       volumes:
@@ -30,18 +30,16 @@ spec:
           volumeAttributes:
             secretProviderClass: keystone-secrets
       containers:
-      - name: keystone
+      - name: keystone-celery
         image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s
         imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 8000
         resources:
           limits:
-            memory: "512Mi"
-            cpu: "256m"
+            memory: "100Mi"
+            cpu: "100m"
           requests:
-            memory: "256Mi"
-            cpu: "128m"
+            memory: "100Mi"
+            cpu: "100m"
         volumeMounts:
         - name: keystone-secrets
           mountPath: /app/.env

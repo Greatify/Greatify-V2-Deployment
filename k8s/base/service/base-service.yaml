@@ -7,3 +7,4 @@ spec:
   - port: 8000
   selector:
     app: keystone
+  type: ClusterIP

@@ -37,6 +37,36 @@ patches:
                 image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s
                 resources:
                   requests:
+                    cpu: 100m
+                    memory: 100Mi
+                  limits:
+                    cpu: 200m
+                    memory: 200Mi
+
+  # Patch for Deployment configuration
+  - target:
+      kind: Deployment
+      name: keystone-celery-service
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: keystone-celery-service
+        labels:
+          app: keystone-celery
+      spec:
+        template:
+          metadata:
+            labels:
+              app: keystone-celery
+            annotations:
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s 
+          spec:
+            containers:
+              - name: keystone-celery
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s
+                resources:
+                  requests:
                     cpu: 400m
                     memory: 600Mi
                   limits:
