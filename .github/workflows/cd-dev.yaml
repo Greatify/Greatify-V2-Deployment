@@ -70,6 +70,9 @@ jobs:
         run: |
           kubectl apply -k k8s/overlays/dev --validate=true
           kubectl rollout status deployment/keystone-service -n dev-keystone-service --timeout=300s
+          kubectl rollout status deployment/rabbitmq -n dev-keystone-service --timeout=300s
+          kubectl rollout status deployment/redis -n dev-keystone-service --timeout=300s
+          kubectl rollout status deployment/keystone-celery-service -n dev-keystone-service --timeout=300s
 
       # - name: 🌐 Create CloudFront Invalidation
       #   run: |
