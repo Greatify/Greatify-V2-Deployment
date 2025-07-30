@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:c9c55d6f1d067adf116309e0f73bd6cffc2a4efa-Refactor-development-settings- 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:c9c55d6f1d067adf116309e0f73bd6cffc2a4efa-Refactor-development-settings-
                 resources:
                   requests:
                     cpu: 100m
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:c9c55d6f1d067adf116309e0f73bd6cffc2a4efa-Refactor-development-settings- 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:c9c55d6f1d067adf116309e0f73bd6cffc2a4efa-Refactor-development-settings-
                 resources:
                   requests:
                     cpu: 400m
