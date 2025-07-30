@@ -36,12 +36,12 @@ patches:
               - name: keystone
                 image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:3cb6bbd3f9fa6c0458d7db06d0f477fa335115b3-Add-python-dotenv-to-base-requ
                 resources:
-                  requests:
-                    cpu: 100m
-                    memory: 100Mi
                   limits:
-                    cpu: 200m
-                    memory: 200Mi
+                    memory: "1024Mi"
+                    cpu: "500m"
+                  requests:
+                    memory: "512Mi"
+                    cpu: "250m"
 
   # Patch for Deployment configuration
   - target:

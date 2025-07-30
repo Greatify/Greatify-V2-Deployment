@@ -37,11 +37,11 @@ spec:
         - containerPort: 8000
         resources:
           limits:
-            memory: "512Mi"
-            cpu: "256m"
+            memory: "1024Mi"
+            cpu: "500m"
           requests:
-            memory: "256Mi"
-            cpu: "128m"
+            memory: "512Mi"
+            cpu: "250m"
         volumeMounts:
         - name: keystone-secrets
           mountPath: /app/.env
