@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:bd0551023352d4d3ed805bd919066fde29c54129-chore-Update-Dockerfile-for-pr 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:86dd84c108afa33a3ea8dfc3f7c438f34551cc2c-fix-Improve-error-logging-duri 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:bd0551023352d4d3ed805bd919066fde29c54129-chore-Update-Dockerfile-for-pr
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:86dd84c108afa33a3ea8dfc3f7c438f34551cc2c-fix-Improve-error-logging-duri
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:bd0551023352d4d3ed805bd919066fde29c54129-chore-Update-Dockerfile-for-pr 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:86dd84c108afa33a3ea8dfc3f7c438f34551cc2c-fix-Improve-error-logging-duri 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:bd0551023352d4d3ed805bd919066fde29c54129-chore-Update-Dockerfile-for-pr
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:86dd84c108afa33a3ea8dfc3f7c438f34551cc2c-fix-Improve-error-logging-duri
                 resources:
                   requests:
                     cpu: 400m
