@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:890582009f4c94a90e960b795beb0c8f1072d20a-Add-python-dotenv-to-base-requ 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:3cb6bbd3f9fa6c0458d7db06d0f477fa335115b3-Add-python-dotenv-to-base-requ 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:890582009f4c94a90e960b795beb0c8f1072d20a-Add-python-dotenv-to-base-requ
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:3cb6bbd3f9fa6c0458d7db06d0f477fa335115b3-Add-python-dotenv-to-base-requ
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:890582009f4c94a90e960b795beb0c8f1072d20a-Add-python-dotenv-to-base-requ 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:3cb6bbd3f9fa6c0458d7db06d0f477fa335115b3-Add-python-dotenv-to-base-requ 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:890582009f4c94a90e960b795beb0c8f1072d20a-Add-python-dotenv-to-base-requ
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:3cb6bbd3f9fa6c0458d7db06d0f477fa335115b3-Add-python-dotenv-to-base-requ
                 resources:
                   requests:
                     cpu: 400m

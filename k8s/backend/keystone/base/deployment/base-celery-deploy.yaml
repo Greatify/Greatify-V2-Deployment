@@ -19,7 +19,7 @@ spec:
       labels:
         app: keystone-celery
       annotations:
-        kubernetes.io/change-cause: "Updated to "
+        kubernetes.io/change-cause: "Updated to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-shell-script"
     spec:
       serviceAccountName: keystone-sa
       volumes:
@@ -31,7 +31,7 @@ spec:
             secretProviderClass: keystone-secrets
       containers:
       - name: keystone-celery
-        image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-s
+        image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:6fa427de9e4e9f540c2728587b28b5983e7e3c59-Update-Dockerfile-to-execute-shell-script
         imagePullPolicy: IfNotPresent
         resources:
           limits:

@@ -30,10 +30,11 @@ jobs:
           echo "📝 COMMIT_MESSAGE: ${{ github.event.inputs.commit_message }}"
           echo "🌐 Environment: development"
 
-      - name: 📥 Checkout Code
+      - name: 📥 Checkout Deployment Repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT_TOKEN }}
+          fetch-depth: 0
 
       - name: 🔧 Set image tag and metadata from inputs
         run: |
@@ -44,15 +45,15 @@ jobs:
 
       - name: 🛠️ Update kustomization.yaml with new image and change-cause
         run: |
-          sed -i "s|image: .*|image: ${{ env.KEYSTONE_IMAGE }}|" k8s/overlays/dev/kustomization.yaml
-          sed -i "s|kubernetes.io/change-cause: .*|kubernetes.io/change-cause: Update to ${{ env.KEYSTONE_IMAGE }} |" k8s/overlays/dev/kustomization.yaml
+          sed -i "s|image: .*|image: ${{ env.KEYSTONE_IMAGE }}|" k8s/backend/keystone/overlays/dev/kustomization.yaml
+          sed -i "s|kubernetes.io/change-cause: .*|kubernetes.io/change-cause: Update to ${{ env.KEYSTONE_IMAGE }} |" k8s/backend/keystone/overlays/dev/kustomization.yaml
 
       - name: 📤 Commit and Push Changes to kustomization.yaml
         run: |
           git pull origin main
           git config --local user.email "suriyanarayanan.s@greatify.ai"
           git config --local user.name "surya1005"
-          git add -f k8s/overlays/dev/kustomization.yaml
+          git add -f k8s/backend/keystone/overlays/dev/kustomization.yaml
           git commit -m "🔧 Update deployment image and change cause [Automated] For Dev Environment"
           git push origin main
 
@@ -68,7 +69,7 @@ jobs:
 
       - name: 🚀 Apply K8s manifests and monitor rollout
         run: |
-          kubectl apply -k k8s/overlays/dev --validate=true
+          kubectl apply -k k8s/backend/keystone/overlays/dev --validate=true
           kubectl rollout status deployment/keystone-service -n dev-keystone-service --timeout=300s
           kubectl rollout status deployment/rabbitmq -n dev-keystone-service --timeout=300s
           kubectl rollout status deployment/redis -n dev-keystone-service --timeout=300s
@@ -85,17 +86,9 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          fields: author,action,eventName,ref,workflow
-          author_name: 🚀 Keystone Development Deployment Status
-          if_mention: success,failure
-          job_name: Deploy to Development
-          channel: learnx-team
-          username: Keystone
           text: |
-            ${{ format('{0} *Deployment Job* - *{1} (Keystone Dev Environment)*', job.status == 'success' && ':rocket:' || ':x:', job.status) }}
-            *📦 Deployment for commit* `${{ env.COMMIT_SHA }}` by *${{ env.DEPLOY_ACTOR }}* has **${{ job.status }}** in *Keystone Dev Environment*.
-            *📝 Message:* `${{ env.COMMIT_MESSAGE }}`
-            ${{ job.status == 'success' && '✅ Your changes have been successfully deployed. Please verify them at [greatify.us](https://greatify.us).' || '❌ Deployment failed. Please check the logs and fix the issues.' }}
+            ${{ job.status == 'success' && ':rocket:' || ':x:' }} *Keystone Dev - Deployment ${{ job.status }}*
+            *By:* ${{ github.actor }} | *SHA:* ${{ env.COMMIT_SHA }}
+            ${{ job.status == 'success' && 'Successfully deployed to greatify.us' || 'Check logs for deployment errors.' }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_COLOR: ${{ job.status == 'success' && 'good' || 'danger' }}
