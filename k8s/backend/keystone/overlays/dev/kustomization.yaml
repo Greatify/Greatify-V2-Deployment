@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:f9fea186543097663b0bf4d3126ceca7db57542f-refactor-Standardize-environme 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:ce78b65736d8c23779148cc700eca2637a360442-feat-Introduce-Docker-support- 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:f9fea186543097663b0bf4d3126ceca7db57542f-refactor-Standardize-environme
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:ce78b65736d8c23779148cc700eca2637a360442-feat-Introduce-Docker-support-
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:f9fea186543097663b0bf4d3126ceca7db57542f-refactor-Standardize-environme 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:ce78b65736d8c23779148cc700eca2637a360442-feat-Introduce-Docker-support- 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:f9fea186543097663b0bf4d3126ceca7db57542f-refactor-Standardize-environme
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:ce78b65736d8c23779148cc700eca2637a360442-feat-Introduce-Docker-support-
                 resources:
                   requests:
                     cpu: 400m
