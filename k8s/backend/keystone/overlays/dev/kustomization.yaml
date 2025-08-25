@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:d37707bfadb5a2cc9f7407da944131a0e83507ec-feat-Update-Django-settings-fo 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:98f5b2ae702f012c8d4a9886f829464bcb8ba542-feat-Introduce-Docker-support- 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:d37707bfadb5a2cc9f7407da944131a0e83507ec-feat-Update-Django-settings-fo
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:98f5b2ae702f012c8d4a9886f829464bcb8ba542-feat-Introduce-Docker-support-
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:d37707bfadb5a2cc9f7407da944131a0e83507ec-feat-Update-Django-settings-fo 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:98f5b2ae702f012c8d4a9886f829464bcb8ba542-feat-Introduce-Docker-support- 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:d37707bfadb5a2cc9f7407da944131a0e83507ec-feat-Update-Django-settings-fo
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:98f5b2ae702f012c8d4a9886f829464bcb8ba542-feat-Introduce-Docker-support-
                 resources:
                   requests:
                     cpu: 400m
