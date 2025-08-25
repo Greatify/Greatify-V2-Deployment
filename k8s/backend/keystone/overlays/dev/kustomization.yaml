@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:d655bf0608fa1e5fc220c993d3651935a850c4c1-feat-Update-Redis-cache-config 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:8553747a181d1ad1bcc48c0113367ec0e0a93aa6-feat-Improve-logging-configura 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:d655bf0608fa1e5fc220c993d3651935a850c4c1-feat-Update-Redis-cache-config
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:8553747a181d1ad1bcc48c0113367ec0e0a93aa6-feat-Improve-logging-configura
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:d655bf0608fa1e5fc220c993d3651935a850c4c1-feat-Update-Redis-cache-config 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:8553747a181d1ad1bcc48c0113367ec0e0a93aa6-feat-Improve-logging-configura 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:d655bf0608fa1e5fc220c993d3651935a850c4c1-feat-Update-Redis-cache-config
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:8553747a181d1ad1bcc48c0113367ec0e0a93aa6-feat-Improve-logging-configura
                 resources:
                   requests:
                     cpu: 400m
