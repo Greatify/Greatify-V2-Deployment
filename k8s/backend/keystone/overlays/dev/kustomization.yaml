@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:3bfcd8694747d07016251b5f457bb23bed0f5864-feat-Update-Dockerfile-for-enh 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:b3eb9e372b4e71d5e24f19fe40486891790bd752-feat-Update-Prometheus-metrics 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:3bfcd8694747d07016251b5f457bb23bed0f5864-feat-Update-Dockerfile-for-enh
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:b3eb9e372b4e71d5e24f19fe40486891790bd752-feat-Update-Prometheus-metrics
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:3bfcd8694747d07016251b5f457bb23bed0f5864-feat-Update-Dockerfile-for-enh 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:b3eb9e372b4e71d5e24f19fe40486891790bd752-feat-Update-Prometheus-metrics 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:3bfcd8694747d07016251b5f457bb23bed0f5864-feat-Update-Dockerfile-for-enh
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:b3eb9e372b4e71d5e24f19fe40486891790bd752-feat-Update-Prometheus-metrics
                 resources:
                   requests:
                     cpu: 400m
