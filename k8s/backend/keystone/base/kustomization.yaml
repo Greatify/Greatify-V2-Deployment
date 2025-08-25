@@ -11,3 +11,4 @@ resources:
   - service/redis-service.yaml
   - ingress/base-ingress.yaml
   - secretproviderclass/base-secretproviderclass.yaml
+  - configmap/nginx.conf

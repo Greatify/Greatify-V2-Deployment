@@ -90,13 +90,20 @@ patches:
         rules:
           - http:
               paths:
-                - path: /
+                - path: /api/
                   pathType: Prefix
                   backend:
                     service:
                       name: keystone-service
                       port:
-                        number: 8000
+                        number: 80
+                - path: /api/health/
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: keystone-service
+                      port:
+                        number: 80
         tls:
           - hosts:
               -  greatify.us
