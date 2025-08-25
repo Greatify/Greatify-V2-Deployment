@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:22032da87e3365cdf251b08ecd9772af47fc9f7d-feat-Log-environment-variables 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:e7d6e8cbba29518b715dbcb637cf66e11fa142b8-feat-Enhance-Django-setup-with 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:22032da87e3365cdf251b08ecd9772af47fc9f7d-feat-Log-environment-variables
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:e7d6e8cbba29518b715dbcb637cf66e11fa142b8-feat-Enhance-Django-setup-with
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:22032da87e3365cdf251b08ecd9772af47fc9f7d-feat-Log-environment-variables 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:e7d6e8cbba29518b715dbcb637cf66e11fa142b8-feat-Enhance-Django-setup-with 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:22032da87e3365cdf251b08ecd9772af47fc9f7d-feat-Log-environment-variables
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:e7d6e8cbba29518b715dbcb637cf66e11fa142b8-feat-Enhance-Django-setup-with
                 resources:
                   requests:
                     cpu: 400m
