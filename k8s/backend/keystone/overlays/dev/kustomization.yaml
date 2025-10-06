@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:dev-a217b2b0567729d8e4a899df1ea4369df7d9860d-fix-Correct-branch-name-in-CI- 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:dev-493eec73684c735b28f922082626c911939e91bb-fix-Standardize-branch-name-in 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:dev-a217b2b0567729d8e4a899df1ea4369df7d9860d-fix-Correct-branch-name-in-CI-
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:dev-493eec73684c735b28f922082626c911939e91bb-fix-Standardize-branch-name-in
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:dev-a217b2b0567729d8e4a899df1ea4369df7d9860d-fix-Correct-branch-name-in-CI- 
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:dev-493eec73684c735b28f922082626c911939e91bb-fix-Standardize-branch-name-in 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:dev-a217b2b0567729d8e4a899df1ea4369df7d9860d-fix-Correct-branch-name-in-CI-
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:dev-493eec73684c735b28f922082626c911939e91bb-fix-Standardize-branch-name-in
                 resources:
                   requests:
                     cpu: 400m
