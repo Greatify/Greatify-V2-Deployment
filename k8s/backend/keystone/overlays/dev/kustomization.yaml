@@ -30,11 +30,11 @@ patches:
             labels:
               app: keystone
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:99f311017c79bb0292dddd13faad0cd30ed82260-feat-Enhance-server-startup-sc 
+              kubernetes.io/change-cause: Update to KEYSTONE_IMAGE= 
           spec:
             containers:
               - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:99f311017c79bb0292dddd13faad0cd30ed82260-feat-Enhance-server-startup-sc
+                image: KEYSTONE_IMAGE=
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -60,11 +60,11 @@ patches:
             labels:
               app: keystone-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:99f311017c79bb0292dddd13faad0cd30ed82260-feat-Enhance-server-startup-sc 
+              kubernetes.io/change-cause: Update to KEYSTONE_IMAGE= 
           spec:
             containers:
               - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:99f311017c79bb0292dddd13faad0cd30ed82260-feat-Enhance-server-startup-sc
+                image: KEYSTONE_IMAGE=
                 resources:
                   requests:
                     cpu: 400m
