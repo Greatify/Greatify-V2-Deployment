@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orion-celery-service
+  labels:
+    app: orion-celery
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: orion-celery
+  template:
+    metadata:
+      labels:
+        app: orion-celery
+      annotations:
+        kubernetes.io/change-cause: "Updated to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest"
+    spec:
+      serviceAccountName: orion-sa
+      volumes:
+      - name: orion-secrets
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: orion-secrets
+      containers:
+      - name: orion-celery
+        image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest
+        imagePullPolicy: IfNotPresent
+        command: ["celery", "-A", "config", "worker", "-l", "info", "-c", "4"]
+        resources:
+          limits:
+            memory: "100Mi"
+            cpu: "100m"
+          requests:
+            memory: "100Mi"
+            cpu: "100m"
+        volumeMounts:
+        - name: orion-secrets
+          mountPath: /app/.env
+          subPath: .env

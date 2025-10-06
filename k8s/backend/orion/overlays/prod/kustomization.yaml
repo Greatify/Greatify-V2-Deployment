@@ -1,7 +1,7 @@
 # Kustomization configuration for production environment
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: prod-keystone-service
+namespace: prod-orion-service
 labels:
   - pairs:
       environment: production
@@ -16,26 +16,26 @@ patches:
   # Patch for Deployment configuration
   - target:
       kind: Deployment
-      name: keystone-service
+      name: orion-service
     patch: |-
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: keystone-service
+        name: orion-service
         labels:
-          app: keystone
+          app: orion
       spec:
         replicas: 3
         template:
           metadata:
             labels:
-              app: keystone
+              app: orion
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:latest-prod
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest-prod
           spec:
             containers:
-              - name: keystone
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:latest-prod
+              - name: orion
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest-prod
                 resources:
                   limits:
                     memory: "4096Mi"
@@ -47,26 +47,26 @@ patches:
   # Patch for Celery Deployment configuration
   - target:
       kind: Deployment
-      name: keystone-celery-service
+      name: orion-celery-service
     patch: |-
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: keystone-celery-service
+        name: orion-celery-service
         labels:
-          app: keystone-celery
+          app: orion-celery
       spec:
         replicas: 3
         template:
           metadata:
             labels:
-              app: keystone-celery
+              app: orion-celery
             annotations:
-              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:latest-prod
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest-prod
           spec:
             containers:
-              - name: keystone-celery
-                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-auth-service:latest-prod
+              - name: orion-celery
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest-prod
                 resources:
                   requests:
                     cpu: 1000m
@@ -78,19 +78,19 @@ patches:
   # Patch for RabbitMQ with higher resources for production
   - target:
       kind: Deployment
-      name: keystone-rabbitmq
+      name: orion-rabbitmq
     patch: |-
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: keystone-rabbitmq
+        name: orion-rabbitmq
         labels:
-          app: keystone-rabbitmq
+          app: orion-rabbitmq
       spec:
         template:
           spec:
             containers:
-              - name: keystone-rabbitmq
+              - name: orion-rabbitmq
                 resources:
                   requests:
                     memory: "500Mi"
@@ -102,19 +102,19 @@ patches:
   # Patch for Redis with higher resources for production
   - target:
       kind: Deployment
-      name: keystone-redis
+      name: orion-redis
     patch: |-
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: keystone-redis
+        name: orion-redis
         labels:
-          app: keystone-redis
+          app: orion-redis
       spec:
         template:
           spec:
             containers:
-              - name: keystone-redis
+              - name: orion-redis
                 resources:
                   limits:
                     memory: "1024Mi"
@@ -126,12 +126,12 @@ patches:
   # Patch for Ingress configuration
   - target:
       kind: Ingress
-      name: keystone-ingress
+      name: orion-ingress
     patch: |-
       apiVersion: networking.k8s.io/v1
       kind: Ingress
       metadata:
-        name: keystone-ingress
+        name: orion-ingress
         annotations:
           alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:399600302704:certificate/fc7615a3-19ad-4aa1-988a-ac4ce7e18986
           alb.ingress.kubernetes.io/cors-allow-origin: >-
@@ -140,20 +140,20 @@ patches:
         rules:
           - http:
               paths:
-                - path: /api/
+                - path: /api/v1/
                   pathType: Prefix
                   backend:
                     service:
-                      name: keystone-service
+                      name: orion-service
                       port:
-                        number: 8000
-                - path: /api/health/
+                        number: 80
+                - path: /api/v1/health/
                   pathType: Prefix
                   backend:
                     service:
-                      name: keystone-service
+                      name: orion-service
                       port:
-                        number: 8000
+                        number: 80
         tls:
           - hosts:
               - greatify.us
@@ -162,16 +162,15 @@ patches:
   # Patch for SecretProviderClass configuration
   - target:
       kind: SecretProviderClass
-      name: keystone-secrets
+      name: orion-secrets
     patch: |-
       apiVersion: secrets-store.csi.x-k8s.io/v1
       kind: SecretProviderClass
       metadata:
-        name: keystone-secrets
+        name: orion-secrets
       spec:
         parameters:
           objects: |
-            - objectName: arn:aws:secretsmanager:ap-south-1:399600302704:secret:keystone-secrets-prod-Cs3Vge
+            - objectName: arn:aws:secretsmanager:ap-south-1:399600302704:secret:orion-secrets-prod-Cs3Vge
               objectAlias: ".env"
               objectType: "secretsmanager"
-

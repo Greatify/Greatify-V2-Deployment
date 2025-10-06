@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orion-service
+  labels:
+    app: orion
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: orion
+  template:
+    metadata:
+      labels:
+        app: orion
+      annotations:
+        kubernetes.io/change-cause: "Updated to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest"
+    spec:
+      serviceAccountName: orion-sa
+      volumes:
+      - name: orion-secrets
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: orion-secrets
+      - name: orion-global-nginx-config
+        configMap:
+          name: orion-nginx-config
+      - name: orion-server-config
+        configMap:
+          name: orion-nginx-config
+          items:
+            - key: default.conf
+              path: default.conf
+      containers:
+      - name: orion
+        image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+        volumeMounts:
+        - name: orion-secrets
+          mountPath: /app/.env
+          subPath: .env
+        - name: orion-global-nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: orion-server-config
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf

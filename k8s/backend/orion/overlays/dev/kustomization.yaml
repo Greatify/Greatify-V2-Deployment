@@ -1,0 +1,126 @@
+# Kustomization configuration for development environment
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: dev-orion-service
+labels:
+  - pairs:
+      environment: development
+    includeSelectors: false
+    includeTemplates: true
+
+resources:
+  - ../../base
+
+# Patches for different Kubernetes resources
+patches:
+  # Patch for Deployment configuration
+  - target:
+      kind: Deployment
+      name: orion-service
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: orion-service
+        labels:
+          app: orion
+      spec:
+        template:
+          metadata:
+            labels:
+              app: orion
+            annotations:
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest-dev
+          spec:
+            containers:
+              - name: orion
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest-dev
+                resources:
+                  limits:
+                    memory: "1024Mi"
+                    cpu: "500m"
+                  requests:
+                    memory: "512Mi"
+                    cpu: "250m"
+
+  # Patch for Celery Deployment configuration
+  - target:
+      kind: Deployment
+      name: orion-celery-service
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: orion-celery-service
+        labels:
+          app: orion-celery
+      spec:
+        template:
+          metadata:
+            labels:
+              app: orion-celery
+            annotations:
+              kubernetes.io/change-cause: Update to 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest-dev
+          spec:
+            containers:
+              - name: orion-celery
+                image: 399600302704.dkr.ecr.ap-south-1.amazonaws.com/greatify-orion-service:latest-dev
+                resources:
+                  requests:
+                    cpu: 400m
+                    memory: 600Mi
+                  limits:
+                    cpu: 500m
+                    memory: 700Mi
+
+  # Patch for Ingress configuration
+  - target:
+      kind: Ingress
+      name: orion-ingress
+    patch: |-
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: orion-ingress
+        annotations:
+          alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:399600302704:certificate/fc7615a3-19ad-4aa1-988a-ac4ce7e18986
+          alb.ingress.kubernetes.io/cors-allow-origin: >-
+            https://greatify.us,https://www.greatify.us,https://*.greatify.us,https://*.learnx.greatify.us,https://*.examx.greatify.us,https://*.placex.greatify.us,https://*.managex.greatify.us
+      spec:
+        rules:
+          - http:
+              paths:
+                - path: /api/v1/
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: orion-service
+                      port:
+                        number: 80
+                - path: /api/v1/health/
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: orion-service
+                      port:
+                        number: 80
+        tls:
+          - hosts:
+              -  greatify.us
+            secretName: tls-secret
+
+  # Patch for SecretProviderClass configuration
+  - target:
+      kind: SecretProviderClass
+      name: orion-secrets
+    patch: |-
+      apiVersion: secrets-store.csi.x-k8s.io/v1
+      kind: SecretProviderClass
+      metadata:
+        name: orion-secrets
+      spec:
+        parameters:
+          objects: |
+            - objectName: arn:aws:secretsmanager:ap-south-1:399600302704:secret:orion-secrets-dev-Cs3Vge
+              objectAlias: ".env"
+              objectType: "secretsmanager"

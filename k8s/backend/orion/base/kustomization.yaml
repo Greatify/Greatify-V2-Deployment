@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment/base-deploy.yaml
+  - deployment/base-celery-deploy.yaml
+  - deployment/base-rabbitmq-deploy.yaml
+  - deployment/base-redis-deploy.yaml
+  - service/rabbit-service.yaml
+  - service/base-service.yaml
+  - service/redis-service.yaml
+  - ingress/base-ingress.yaml
+  - secretproviderclass/base-secretproviderclass.yaml
+  - configmap/nginx.conf

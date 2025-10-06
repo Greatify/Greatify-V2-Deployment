@@ -3,46 +3,146 @@ name: Keystone - Deploy to Development
 on:
   workflow_dispatch:
     inputs:
-      image:
-        description: 'Keystone Docker image to deploy'
+      deploy_branch:
+        description: 'Branch to deploy from source repo'
         required: true
+        type: string
+        default: 'initial-workflow-setup'
       sha:
         description: 'Git SHA of the commit'
         required: true
+        type: string
       commit_message:
-        description: 'Sanitized commit message'
+        description: 'Original commit message'
         required: true
+        type: string
 
 jobs:
+
+  Dev-Docker-Build:
+    name: Dev Docker Build
+    runs-on: ubuntu-24.04-arm
+    environment: dev
+    timeout-minutes: 30  
+    strategy:
+      matrix:
+        python-version: [3.13]
+      max-parallel: 4
+      fail-fast: true   
+    steps:
+      - name: Display Build Information
+        run: |
+          echo "Branch: ${{ github.event.inputs.deploy_branch }}"
+          echo "Commit SHA: ${{ github.event.inputs.sha }}"
+          echo "Commit Message: ${{ github.event.inputs.commit_message }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          repository: Greatify/Keystone
+          token: ${{ secrets.PAT_TOKEN }}
+          ref: ${{ github.event.inputs.deploy_branch }}
+          fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Sanitize tag
+        id: sanitize-tag
+        run: |
+          SANITIZED_COMMIT_MESSAGE=$(echo "${{ github.event.inputs.commit_message }}" | tr ' ' '-')
+          echo "Original commit message: ${{ github.event.inputs.commit_message }}"
+          echo "After space replacement in commit message: ${SANITIZED_COMMIT_MESSAGE}"
+          SANITIZED_COMMIT_MESSAGE=$(echo "${SANITIZED_COMMIT_MESSAGE}" | tr -cd 'a-zA-Z0-9-.' | cut -c 1-30)
+          echo "Final sanitized commit message: ${SANITIZED_COMMIT_MESSAGE}"
+          echo "sanitized_commit_message=${SANITIZED_COMMIT_MESSAGE}" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      
+      - name: Build and Push Docker image to ECR
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/greatify-auth-service:latest
+            ${{ steps.login-ecr.outputs.registry }}/greatify-auth-service:${{ github.sha }}-${{ steps.sanitize-tag.outputs.sanitized_commit_message }}
+          platforms: linux/arm64
+          cache-from: |
+            type=gha
+            type=registry,ref=${{ steps.login-ecr.outputs.registry }}/greatify-auth-service:cache
+          cache-to: |
+            type=gha,mode=max
+            type=registry,ref=${{ steps.login-ecr.outputs.registry }}/greatify-auth-service:cache,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+
+      - name: Save image tag to file
+        run: |
+          echo "KEYSTONE_IMAGE=${{ steps.build.outputs.tags }}" > keystone_image.txt
+      
+      - name: Upload image tag files
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-tags
+          path: |
+            keystone_image.txt
+          retention-days: 1
+          if-no-files-found: error
+      - name: Notify on Docker Build Failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+            status: failure 
+            channel: keystone
+            author_name: Keystone Dev Docker Build Status
+            text: |
+              [❌] Keystone Dev Docker Build: Failed
+              Commit: ${{ github.sha }} | By: @${{ github.actor }}
+              Message: ${{ github.event.inputs.commit_message }}
+
   Deploy-to-Development:
     name: Deploy to Dev Environment
-    runs-on: ubuntu-latest
-    environment: 
-      name: dev
-      url: https://greatify.us
+    runs-on: ubuntu-24.04-arm
+    environment: dev
     timeout-minutes: 20
-
+    needs: [Dev-Docker-Build]
+    env:
+      # CLOUDFRONT_DISTRIBUTION: ${{ secrets.DEV_CLOUDFRONT_DISTRIBUTION }}
+      URL: ${{ vars.KESTONE_DEV_URL }}
+      
     steps:
-      - name: Display Deployment Information
-        run: |
-          echo "Keystone_Image: ${{ github.event.inputs.image }}"
-          echo "COMMIT_SHA: ${{ github.event.inputs.sha }}"
-          echo "COMMIT_MESSAGE: ${{ github.event.inputs.commit_message }}"
-          echo "Environment: development"
-
       - name: Checkout Deployment Repository
         uses: actions/checkout@v4
         with:
+          ref: 'main'
           token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0
 
-      - name: Set image tag and metadata from inputs
-        run: |
-          echo "KEYSTONE_IMAGE=${{ github.event.inputs.image }}" >> $GITHUB_ENV
-          echo "COMMIT_SHA=${{ github.event.inputs.sha }}" >> $GITHUB_ENV
-          echo "COMMIT_MESSAGE=${{ github.event.inputs.commit_message }}" >> $GITHUB_ENV
-          echo "DEPLOY_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
+      - name: Download image tag files
+        uses: actions/download-artifact@v4
+        with:
+          name: image-tags
+          path: .
 
+      - name: Set image tag 
+        run: |
+          echo "KEYSTONE_IMAGE=$(<keystone_image.txt)" >> $GITHUB_ENV
+            
       - name: Update kustomization.yaml with new image and change-cause
         run: |
           sed -i "s|image: .*|image: ${{ env.KEYSTONE_IMAGE }}|" k8s/backend/keystone/overlays/dev/kustomization.yaml
@@ -54,8 +154,12 @@ jobs:
           git config --local user.email "suriyanarayanan.s@greatify.ai"
           git config --local user.name "surya1005"
           git add -f k8s/backend/keystone/overlays/dev/kustomization.yaml
-          git commit -m "Update deployment image and change cause [Automated] For Dev Environment"
-          git push origin main
+          if git diff --cached --quiet; then
+            echo "No changes to commit, skipping commit and push"
+          else
+            git commit -m "Update deployment image and change cause [Automated] For Dev Environment"
+            git push origin main
+          fi
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -86,9 +190,12 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
+          channel: keystone
+          author_name: Keystone Dev Deployment Status
           text: |
-            ${{ job.status == 'success' && ':rocket:' || ':x:' }} *Keystone Dev - Deployment ${{ job.status }}*
-            *By:* ${{ github.actor }} | *SHA:* ${{ env.COMMIT_SHA }}
-            ${{ job.status == 'success' && 'Successfully deployed to greatify.us' || 'Check logs for deployment errors.' }}
+            [${{ job.status == 'success' && '✅' || '❌' }}] Keystone Dev Deployment: ${{ job.status }}
+            Commit: ${{ github.event.inputs.sha }} | By: @${{ github.actor }}
+            Message: ${{ github.event.inputs.commit_message }}
+            *URL:* ${{env.URL}}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
