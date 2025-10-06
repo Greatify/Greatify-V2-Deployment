@@ -108,7 +108,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
             status: failure 
-            channel: keystone
+            channel: learnx-team
             author_name: Keystone Dev Docker Build Status
             text: |
               [❌] Keystone Dev Docker Build: Failed
@@ -190,7 +190,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          channel: keystone
+          channel: learnx-team
           author_name: Keystone Dev Deployment Status
           text: |
             [${{ job.status == 'success' && '✅' || '❌' }}] Keystone Dev Deployment: ${{ job.status }}
