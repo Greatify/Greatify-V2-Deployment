@@ -93,7 +93,7 @@ jobs:
 
       - name: Save image tag to file
         run: |
-          echo "KEYSTONE_IMAGE=${{ steps.build.outputs.tags }}" > keystone_image.txt
+          echo "${{ steps.login-ecr.outputs.registry }}/greatify-auth-service:dev-${{ github.sha }}-${{ steps.sanitize-tag.outputs.sanitized_commit_message }}" > keystone_image.txt
       
       - name: Upload image tag files
         uses: actions/upload-artifact@v4
@@ -103,6 +103,7 @@ jobs:
             keystone_image.txt
           retention-days: 1
           if-no-files-found: error
+          
       - name: Notify on Docker Build Failure
         if: failure()
         uses: 8398a7/action-slack@v3
